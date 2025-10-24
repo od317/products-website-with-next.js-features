@@ -1,2 +1,3 @@
 rendering method for each page:
-prodducts page : isr
+products page : isr
+product details page : generateStaticParams
