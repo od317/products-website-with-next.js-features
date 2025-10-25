@@ -4,8 +4,8 @@ import { API_ENDPOINTS } from "@/lib/api";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Metadata } from "next";
+import { ProductReviews } from "@/components/product-reviews";
 
-export const dynamicParams = true; // This is the default (equivalent to fallback: 'blocking')
 
 export async function generateStaticParams() {
   const res = await fetch(API_ENDPOINTS.PRODUCTS);
@@ -59,9 +59,9 @@ export default async function ProductPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Product Images */}
-        <div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Product Images - Left Column */}
+        <div className="lg:col-span-1">
           <div className="relative h-96 mb-4">
             <Image
               src={product.thumbnail}
@@ -85,8 +85,8 @@ export default async function ProductPage({
           </div>
         </div>
 
-        {/* Product Details */}
-        <div>
+        {/* Product Details - Middle Column */}
+        <div className="lg:col-span-1">
           <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
           <p className="text-2xl font-bold text-green-600 mb-4">
             ${product.price}
@@ -108,6 +108,11 @@ export default async function ProductPage({
               <strong>Discount:</strong> {product.discountPercentage}% off
             </p>
           </div>
+        </div>
+
+        {/* Reviews Section - Right Column */}
+        <div className="lg:col-span-1">
+          <ProductReviews productId={id} productName={product.title} />
         </div>
       </div>
     </div>
