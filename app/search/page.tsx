@@ -1,5 +1,5 @@
 // app/search/page.tsx
-import { ProductsResponse, Product } from "@/types";
+import { ProductsResponse } from "@/types";
 import { API_ENDPOINTS } from "@/lib/api";
 import Link from "next/link";
 import Image from "next/image";
