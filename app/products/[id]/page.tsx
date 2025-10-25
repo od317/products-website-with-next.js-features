@@ -5,31 +5,23 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Metadata } from "next";
 
-// 🎯 NEXT.JS CONCEPT: generateStaticParams
-// This replaces getStaticPaths from Pages Router
-// It tells Next.js which product pages to pre-generate at build time
+export const dynamicParams = true; // This is the default (equivalent to fallback: 'blocking')
+
 export async function generateStaticParams() {
-  // Fetch all products to determine which pages to pre-generate
   const res = await fetch(API_ENDPOINTS.PRODUCTS);
   const data = await res.json();
 
-  // Return array of params for pre-generated pages
-  // Next.js will pre-generate these pages at build time
   return data.products.slice(0, 10).map((product: Product) => ({
     id: product.id.toString(),
   }));
 }
 
-// 🎯 NEXT.JS CONCEPT: Dynamic Data Fetching
-// This runs for each product page (both pre-generated and on-demand)
 async function getProduct(id: string): Promise<Product> {
-  const res = await fetch(API_ENDPOINTS.PRODUCT(id), {
-    // No revalidate here - we'll handle caching differently
-  });
+  const res = await fetch(API_ENDPOINTS.PRODUCT(id), {});
 
   if (!res.ok) {
     if (res.status === 404) {
-      notFound(); // Next.js 404 page
+      notFound();
     }
     throw new Error("Failed to fetch product");
   }
@@ -37,7 +29,6 @@ async function getProduct(id: string): Promise<Product> {
   return res.json();
 }
 
-// 🎯 NEXT.JS CONCEPT: generateMetadata for Dynamic Routes
 // Generate SEO metadata for each product page
 export async function generateMetadata({
   params,
@@ -58,8 +49,6 @@ export async function generateMetadata({
   };
 }
 
-// 🎯 NEXT.JS CONCEPT: Server Component with Dynamic Params
-// params is a Promise in Next.js 16 App Router
 export default async function ProductPage({
   params,
 }: {
@@ -79,7 +68,7 @@ export default async function ProductPage({
               alt={product.title}
               fill
               className="object-cover rounded-lg"
-              priority // Important for above-the-fold images
+              priority
             />
           </div>
           <div className="grid grid-cols-4 gap-2">
