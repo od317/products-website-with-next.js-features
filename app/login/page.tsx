@@ -1,8 +1,8 @@
 // app/login/page.tsx
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // 🎯 NEXT.JS CONCEPT: Client Component for forms
 // We need 'use client' because we're using useState and useRouter
@@ -13,6 +13,9 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const redirectTo = searchParams.get("redirect") || "/admin";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +47,22 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/check");
+        const { authenticated } = await response.json();
+        if (authenticated) {
+          router.push(redirectTo);
+        }
+      } catch (error) {
+        // Ignore error, user is not authenticated
+      }
+    };
+
+    checkAuth();
+  }, [router, redirectTo]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
